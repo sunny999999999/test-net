@@ -1,0 +1,18 @@
+import CryptoBunny from "../contract/CryptoBunny.cdc"
+import NonFungibleToken from "../contract/NonFungibleToken.cdc"
+
+transaction(recipient: Address) {
+  prepare(acct: AuthAccount) {
+   let nftMinter =  acct.borrow<&CryptoBunny.Minter>(from: /storage/Minter)!
+
+   let publicReference = getAccount(recipient).getCapability(/public/Collection)
+                        .borrow<&CryptoBunny.Collection{NonFungibleToken.CollectionPublic}>()
+                         ?? panic("This account does not have a Collection")
+  
+    publicReference.deposit(token: <- nftMinter.createNFT())
+  }
+  execute {
+    log("Stored newly minted NFT into Collection")
+  }
+}
+ 
