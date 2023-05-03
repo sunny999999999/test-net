@@ -1,0 +1,14 @@
+import CryptoBunny from "../contracts/CryptoBunny.cdc"
+import NonFungibleToken from "../contracts/NonFungibleToken.cdc"
+
+transaction() {
+  prepare(signer: AuthAccount) {
+    signer.save(<- CryptoBunny.createEmptyCollection(), to: /storage/MyCollection)
+    
+    signer.link<&CryptoBunny.Collection{NonFungibleToken.CollectionPublic}>(/public/MyCollection, target: /storage/MyCollection)
+  }
+
+  execute {
+    log("Collection Created!")
+  }
+}
